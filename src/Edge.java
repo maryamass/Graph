@@ -1,4 +1,7 @@
 public class Edge {
-    int id;
-    char name;
+    private int id;
+    private String name;
+    private int weight;
+
+
 }
