@@ -4,7 +4,7 @@ import java.util.Objects;
 import static java.lang.Integer.compare;
 
 public class Node implements Comparable<Node>{
-    private int id;
+    public int id;
     private String name ;
     private Graph graph ;
 

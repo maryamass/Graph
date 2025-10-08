@@ -1,15 +1,25 @@
 import java.util.Objects;
 
 public class Edge {
-    private Node from ;
-    private Node to ;
+    public Node from ;
+    public Node to ;
     private int weight = 0;
+    Graph g= new Graph();
 
     public Edge(Node from, Node to) {
         this.from = from;
         this.to = to;
     }
+    public Edge(int id1, int id2, Graph g) {
 
+            if (this.from.getGraph() == this.to.getGraph()) {
+                this.from.id = id1;
+                this.to.id = id2;
+                this.g = g;
+            }
+            else
+                throw new IllegalArgumentException("graph not matched") ;
+    }
     public Edge(int weight, Node from, Node to) {
         this.weight = weight;
         this.from = from;
