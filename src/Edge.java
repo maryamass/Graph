@@ -3,7 +3,7 @@ import java.util.Objects;
 public class Edge {
     public Node from ;
     public Node to ;
-    private int weight = 0;
+    public int weight;
     Graph g= new Graph();
 
     public Edge(Node from, Node to) {
@@ -37,4 +37,30 @@ public class Edge {
     public int hashCode() {
         return Objects.hash(from, to, weight);
     }
+
+    public Node from(){
+        return from;
+    }
+    public Node to(){
+        return to;
+    }
+    public Integer getWeight(){
+        return weight;
+    }
+    public boolean isWeighted() {
+        return weight != 0;
+    }
+    public boolean isSelfLoop(){
+        return this.to == this.from;
+    }
+    //TODO
+
+    public Edge getSymmetric(){
+        return new Edge(to(),from());
+    }
+
+    public boolean isMultiEdge(){
+         return true;
+    }
+
 }
