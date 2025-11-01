@@ -57,4 +57,18 @@ public class Graph {
         List<Edge> out = adjEdList.getOrDefault(u, new ArrayList<>());
         return new ArrayList<>(out);
     }
+
+    public List<Edge> getInEdges(Node n) { return getInEdges(n.getId()); }
+    public List<Edge> getInEdges(int id) {
+        List<Edge> res = new ArrayList<>();
+        for (Map.Entry<Node, List<Edge>> entry : adjEdList.entrySet()) {
+            for (Edge e : entry.getValue()) if (e.to().getId() == id) res.add(e);
+        }
+        return res;
+    }
+    public List<Node> getAllNodes() {
+        List<Node> nodes = new ArrayList<>(adjEdList.keySet());
+        Collections.sort(nodes);
+        return nodes;
+    }
 }
