@@ -32,12 +32,29 @@ public class Graph {
     public void addEdge(Edge e) {
         System.out.print("edge added");
     }
-    public List<Node> getSuccessors(Node n){
 
-        return new ArrayList<>();
+    public Node getNode(int id) {
+        for (Node u : adjEdList.keySet()) if (u.getId() == id) return u;
+        return null;
     }
+
+    public List<Node> getSuccessors(Node n) {
+        return getSuccessors(n.getId()); }
+    public List<Node> getSuccessors(int id) {
+        Node u = getNode(id);
+        if (u == null) return new ArrayList<>();
+        return u.getSuccessors();
+    }
+
     public boolean adjacent(Node u, Node v){
         return true;
     }
 
+    public List<Edge> getOutEdges(Node n) { return getOutEdges(n.getId()); }
+    public List<Edge> getOutEdges(int id) {
+        Node u = getNode(id);
+        if (u == null) return new ArrayList<>();
+        List<Edge> out = adjEdList.getOrDefault(u, new ArrayList<>());
+        return new ArrayList<>(out);
+    }
 }

@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import static java.lang.Integer.compare;
@@ -53,43 +54,44 @@ public class Node implements Comparable<Node>{
     public int hashCode() {
         return Objects.hash(id, name, graph);
     }
-// #############TODO ########################
 
-    public List<Node> getSuccessors(){
-        return graph.getSuccessors(this);
+    public List<Node> getSuccessors() {
+        List<Node> succ = new ArrayList<>();
+        for (Edge e : getOutEdges()) {
+            if (!succ.contains(e.to())) succ.add(e.to());
+        }
+        Collections.sort(succ);
+        return succ;
     }
-
-    public boolean adjacent(Node u) {
-        return true;
-        //return graph.adjacent(this,Node e);
+    public List<Node> getSuccessorsMulti() {
+        List<Node> succ = new ArrayList<>();
+        for (Edge e : getOutEdges()) {
+            succ.add(e.to());
+        }
+        return succ;
     }
-   public List<Edge> getOutEdges(){
-      // for (int i = 0; i < this.getOutEdges().get(); i++) {
-      // }
+// TODO
+public boolean adjacent(int id) {
+    for (Edge e : getOutEdges())
+        if (e.to().getId() == id)
+            return true;
+    return false;
+}
+    public boolean adjacent(Node u) { return adjacent(u != null ? u.getId() : -1); }
 
-        return new ArrayList<>();
-   }
+    public List<Edge> getOutEdges() { return graph.getOutEdges(this); }
+    public List<Edge> getInEdges() { return graph.getInEdges(this); }
 
-   public List<Node> getSuccessor(){
+    public int inDegree() { return getInEdges().size(); }
+    public int outDegree() { return getOutEdges().size(); }
+    public int degree() { return inDegree() + outDegree(); }
 
-        List<Node> l= new ArrayList<>();
-    return l;
-    }
-
-    public List<Node> getSuccessorsMulti(){
-        return new ArrayList<>();
-    }
-
-    public  List<Edge> getInEdges(){
-         return new ArrayList<>();
+   public List<Edge> getIncidentEdges(){
+       List<Edge> res = new ArrayList<>(getOutEdges());
+       for (Edge e : getInEdges()) if (!res.contains(e)) res.add(e);
+       return res;
      }
-
-     public List<Edge> getIncidentEdges(){
-         return new ArrayList<>();
-     }
-
-     public List<Edge> getEdgesTo(Node u){
-        return new ArrayList<>();
-    }
+   public List<Edge> getEdgesTo(Node u) {
+        return graph.getEdges(this, u); }
 
 }
