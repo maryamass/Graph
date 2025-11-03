@@ -159,12 +159,18 @@ public class Graph {
 
     // Transforms [46..54]
     public int[] toSuccessorArray() {
+        // Build SA for node ids 1..largestId, including empty lists
+        int largestId = largestNodeId();
         List<Integer> sa = new ArrayList<>();
-        List<Node> nodes = getAllNodes();
-        for (int i = 0; i < nodes.size(); i++) {
-            Node u = nodes.get(i);
-            for (Edge e : getOutEdges(u)) sa.add(e.to().getId());
-            if (i < nodes.size() - 1) sa.add(0);
+        for (int id = 1; id <= largestId; id++) {
+            Node u = getNode(id);
+            if (u != null) {
+                // use sorted out-edges to keep deterministic order
+                for (Edge e : getOutEdges(u)) {
+                    sa.add(e.to().getId());
+                }
+            }
+            if (id < largestId) sa.add(0); // separator, no trailing zero
         }
         return sa.stream().mapToInt(Integer::intValue).toArray();
     }

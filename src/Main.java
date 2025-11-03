@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,6 +21,8 @@ public class Main {
         System.out.println("the needed implementation");
 
         System.out.print(g.toSuccessorListPretty());
+        int[] sa = g.toSuccessorArray();
+        System.out.println(Arrays.toString(sa));
 //        System.out.println(">> Nodes: ");
 //        List<Node> nodes = g.getAllNodes();
 //        Collections.sort(nodes);
