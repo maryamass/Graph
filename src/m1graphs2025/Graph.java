@@ -13,12 +13,11 @@ public class Graph {
     protected final Map<Node, List<Edge>> adjEdList = new HashMap<>();
     protected final Map<Node, List<Edge>> inAdjEdList = new HashMap<>();
 
-    // Construction
     public Graph() {}
     public Graph(int... sa) {
         this(fromSA(sa));
     }
-//    public Graph(int[] sa) { this(fromSA(sa)); }
+//
     private Graph(Graph g) {
         for (Node u : g.getAllNodes()) this.addNode(u.getId());
         for (Edge e : g.getAllEdges()) this.addEdge(e.from().getId(), e.to().getId(), e.getWeight());
@@ -40,7 +39,6 @@ public class Graph {
         return g;
     }
 
-    // Helpers
     Node ensureNode(int id) { Node n = getNode(id); if (n != null) return n; addNode(id); return Objects.requireNonNull(getNode(id)); }
     public int largestNodeId() { return adjEdList.keySet().stream().mapToInt(Node::getId).max().orElse(0); }
     public int smallestNodeId() { return adjEdList.keySet().stream().mapToInt(Node::getId).min().orElse(0); }
@@ -52,7 +50,8 @@ public class Graph {
     public boolean holdsNode(Node n) { return n != null && n.getGraph() == this && usesNode(n.getId()); }
     public Node getNode(int id) { for (Node u : adjEdList.keySet()) if (u.getId() == id) return u; return null; }
 
-    public boolean addNode(Node n) { return addNode(n.getId()); }
+    public boolean addNode(Node n) {
+        return addNode(n.getId()); }
     public boolean addNode(int id) {
         if (usesNode(id)) return false;
         Node n = new Node(id, this);

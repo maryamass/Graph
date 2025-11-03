@@ -48,15 +48,18 @@ public class Main {
         System.out.println("BFS: " + g2.getBFS());
         System.out.println("Dot:\n" + g2.toDotString());
 
-        int[] s2 = g.toSuccessorArray();
+        int[] s2 = g2.toSuccessorArray();
         System.out.println("SA: " + Arrays.toString(s2));
-
-        int[][] mat = g.toAdjMatrix();
+        boolean b= g2.isMultiGraph();
+        if (!b)
+            System.out.println("g2 is a multigraph");
+        int[][] mat = g2.toAdjMatrix();
         System.out.println("Adj matrix:");
         for (int i = 0; i < mat.length; i++)
             System.out.println(Arrays.toString(mat[i]));
 
-        Graph tr = g.getTransitiveClosure();
+        Graph tr = g2.getTransitiveClosure();
+
         System.out.println("Transitive edges: " + tr.getAllEdges());
 
         Map<Node, NodeVisitInfo> nvi = new HashMap<>();
