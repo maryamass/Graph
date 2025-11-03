@@ -1,8 +1,13 @@
-//package m1graphs2025;
+package m1graphs2025;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Graph {
     protected final Map<Node, List<Edge>> adjEdList = new HashMap<>();
@@ -10,7 +15,9 @@ public class Graph {
 
     // Construction
     public Graph() {}
-    public Graph(int... sa) { this(fromSA(sa)); }
+    public Graph(int... sa) {
+        this(fromSA(sa));
+    }
 //    public Graph(int[] sa) { this(fromSA(sa)); }
     private Graph(Graph g) {
         for (Node u : g.getAllNodes()) this.addNode(u.getId());
@@ -38,7 +45,7 @@ public class Graph {
     public int largestNodeId() { return adjEdList.keySet().stream().mapToInt(Node::getId).max().orElse(0); }
     public int smallestNodeId() { return adjEdList.keySet().stream().mapToInt(Node::getId).min().orElse(0); }
 
-    // Node-related [21..35]
+    // Node-related
     public int nbNodes() { return adjEdList.size(); }
     public boolean usesNode(Node n) { return n != null && getNode(n.getId()) != null; }
     public boolean usesNode(int id) { return getNode(id) != null; }
@@ -62,7 +69,8 @@ public class Graph {
         return true;
     }
 
-    public List<Node> getAllNodes() { List<Node> nodes = new ArrayList<>(adjEdList.keySet()); Collections.sort(nodes); return nodes; }
+    public List<Node> getAllNodes() {
+        List<Node> nodes = new ArrayList<>(adjEdList.keySet()); Collections.sort(nodes); return nodes; }
 
     public List<Node> getSuccessors(Node n) { return getSuccessors(n.getId()); }
     public List<Node> getSuccessors(int id) {
@@ -90,12 +98,16 @@ public class Graph {
     public int degree(Node n) { return degree(n.getId()); }
     public int degree(int id) { return inDegree(id) + outDegree(id); }
 
-    // Edge-related [36..45]
-    public int nbEdges() { int n = 0; for (List<Edge> lst : adjEdList.values()) n += lst.size(); return n; }
-
-    public boolean existsEdge(Node u, Node v) { return !getEdges(u, v).isEmpty(); }
-    public boolean existsEdge(int uid, int vid) { return !getEdges(uid, vid).isEmpty(); }
-    public boolean existsEdge(Edge e) { return getAllEdges().contains(e); }
+    // Edge-related
+    public int nbEdges() {
+        return getAllEdges().size();
+    }
+    public boolean existsEdge(Node u, Node v) {
+        return !getEdges(u, v).isEmpty(); }
+    public boolean existsEdge(int uid, int vid) {
+        return !getEdges(uid, vid).isEmpty(); }
+    public boolean existsEdge(Edge e) {
+        return getAllEdges().contains(e); }
 
     public boolean isMultiEdge(Node u, Node v) { return getEdges(u, v).size() >= 2; }
     public boolean isMultiEdge(int uid, int vid) { return getEdges(uid, vid).size() >= 2; }
@@ -113,7 +125,8 @@ public class Graph {
     }
 
     public boolean removeEdge(Node from, Node to) { return removeEdge(from.getId(), to.getId(), null); }
-    public boolean removeEdge(int fromId, int toId) { return removeEdge(fromId, toId, null); }
+    public boolean removeEdge(int fromId, int toId) {
+        return removeEdge(fromId, toId, null); }
     public boolean removeEdge(Edge e) {
         boolean a = adjEdList.get(e.from()).remove(e);
         boolean b = inAdjEdList.get(e.to()).remove(e);
@@ -155,17 +168,19 @@ public class Graph {
         Collections.sort(res); return res;
     }
 
-    public List<Edge> getAllEdges() { List<Edge> all = new ArrayList<>(); for (List<Edge> lst : adjEdList.values()) all.addAll(lst); Collections.sort(all); return all; }
+    public List<Edge> getAllEdges() {
+        List<Edge> all = new ArrayList<>();
+        for (List<Edge> lst : adjEdList.values()) all.addAll(lst);
+        Collections.sort(all);
+        return all; }
 
     // Transforms [46..54]
     public int[] toSuccessorArray() {
-        // Build SA for node ids 1..largestId, including empty lists
         int largestId = largestNodeId();
         List<Integer> sa = new ArrayList<>();
         for (int id = 1; id <= largestId; id++) {
             Node u = getNode(id);
             if (u != null) {
-                // use sorted out-edges to keep deterministic order
                 for (Edge e : getOutEdges(u)) {
                     sa.add(e.to().getId());
                 }
@@ -197,13 +212,24 @@ public class Graph {
     }
 
     public Graph getTransitiveClosure() {
-        Graph tc = new Graph();
-        for (Node u : getAllNodes()) tc.addNode(u.getId());
+        Graph closure = new Graph();
+        for (Node u : getAllNodes()) closure.addNode(u.getId());
         for (Node u : getAllNodes()) {
-            for (Node v : bfsReachableFrom(u))
-                if (u.getId() != v.getId()) tc.addEdge(u.getId(), v.getId());
+            Set<Integer> reachable = new HashSet<>();
+            Deque<Node> stack = new ArrayDeque<>();
+            stack.push(u);
+            while (!stack.isEmpty()) {
+                Node x = stack.pop();
+                for (Edge e : getOutEdges(x)) {
+                    if (!reachable.contains(e.to().getId())) {
+                        reachable.add(e.to().getId());
+                        stack.push(e.to());
+                    }
+                }
+            }
+            for (Integer vId : reachable) closure.addEdge(u.getId(), vId);
         }
-        return tc;
+        return closure;
     }
     private List<Node> bfsReachableFrom(Node s) {
         Set<Node> vis = new HashSet<>(); Queue<Node> q = new ArrayDeque<>();
@@ -234,9 +260,10 @@ public class Graph {
         }
         return s;
     }
-    public Graph copy() { return new Graph(this); }
+    public Graph copy() {
+        return new Graph(this); }
 
-    // Pretty printer for your required display
+    //printer
     public String toSuccessorListPretty() {
         StringBuilder sb = new StringBuilder();
         for (Node n : getAllNodes()) {
@@ -254,4 +281,163 @@ public class Graph {
         }
         return sb.toString();
     }
+/// BFS
+    public List<Node> getBFS() { List<Node> nodes = getAllNodes(); return getBFS(nodes.isEmpty() ? null : nodes.get(0)); }
+    public List<Node> getBFS(Node u) { return getBFS(u != null ? u.getId() : -1); }
+    public List<Node> getBFS(int id) {
+        List<Node> result = new ArrayList<>();
+        List<Node> nodes = getAllNodes();
+        if (nodes.isEmpty()) return result;
+        Queue<Node> q = new ArrayDeque<>();
+        Set<Integer> seen = new HashSet<>();
+        List<Node> startNodes = new ArrayList<>();
+        if (id != -1 && getNode(id) != null) startNodes.add(getNode(id));
+        for (Node n : nodes) if (startNodes.isEmpty() || !startNodes.contains(n)) startNodes.add(n);
+        for (Node s : startNodes) {
+            if (seen.contains(s.getId())) continue;
+            q.add(s); seen.add(s.getId());
+            while (!q.isEmpty()) {
+                Node uNode = q.remove();
+                result.add(uNode);
+                List<Edge> outs = getOutEdges(uNode);
+                Collections.sort(outs);
+                for (Edge e : outs) {
+                    if (!seen.contains(e.to().getId())) { q.add(e.to()); seen.add(e.to().getId()); }
+                }
+            }
+        }
+        return result;
+    }
+
+    // dfs
+    public List<Node> getDFS() { List<Node> nodes = getAllNodes(); return getDFS(nodes.isEmpty() ? null : nodes.get(0)); }
+    public List<Node> getDFS(Node u) { return getDFS(u != null ? u.getId() : -1); }
+    public List<Node> getDFS(int id) {
+        List<Node> order = new ArrayList<>();
+        List<Node> nodes = getAllNodes();
+        Set<Integer> visited = new HashSet<>();
+        if (nodes.isEmpty()) return order;
+        // start from lowest id or specified if exists
+        List<Node> startNodes = new ArrayList<>();
+        if (id != -1 && getNode(id) != null) startNodes.add(getNode(id));
+        for (Node n : nodes) if (startNodes.isEmpty() || !startNodes.contains(n)) startNodes.add(n);
+        for (Node s : startNodes) {
+            if (!visited.contains(s.getId())) dfsCollect(s, visited, order);
+        }
+        return order;
+    }
+    public List<Node> getDFSWithVisitInfo(Map<Node, NodeVisitInfo> nodeVisit, Map<Edge, EdgeVisitType> edgeVisit) {
+        List<Node> nodes = getAllNodes();
+        return getDFSWithVisitInfo(nodes.isEmpty() ? null : nodes.get(0), nodeVisit, edgeVisit);
+    }
+
+    public List<Node> getDFSWithVisitInfo(Node start, Map<Node, NodeVisitInfo> nodeVisit, Map<Edge, EdgeVisitType> edgeVisit) {
+        if (nodeVisit == null || edgeVisit == null) throw new IllegalArgumentException("Maps cannot be null");
+        nodeVisit.clear(); edgeVisit.clear();
+        for (Node n : getAllNodes()) nodeVisit.put(n, new NodeVisitInfo());
+        List<Node> order = new ArrayList<>();
+        int time = 0;
+        List<Node> nodes = getAllNodes();
+        for (Node s : nodes) {
+            if (nodeVisit.get(s).colour == NodeColour.WHITE) {
+                time = dfsVisit(s, nodeVisit, edgeVisit, time, order);
+            }
+        }
+        return order;
+    }
+    private void dfsCollect(Node u, Set<Integer> visited, List<Node> order) {
+        visited.add(u.getId());
+        order.add(u);
+        List<Edge> outs = getOutEdges(u);
+        Collections.sort(outs);
+        for (Edge e : outs) {
+            if (!visited.contains(e.to().getId())) dfsCollect(e.to(), visited, order);
+        }
+    }
+    private int dfsVisit(Node u, Map<Node, NodeVisitInfo> nodeVisit, Map<Edge, EdgeVisitType> edgeVisit, int time, List<Node> order) {
+        NodeVisitInfo infoU = nodeVisit.get(u);
+        infoU.colour = NodeColour.GRAY;
+        time++; infoU.discovery = time;
+        order.add(u);
+        List<Edge> outs = getOutEdges(u);
+        Collections.sort(outs);
+        for (Edge e : outs) {
+            Node v = e.to();
+            NodeVisitInfo infoV = nodeVisit.get(v);
+            if (infoV.colour == NodeColour.WHITE) {
+                edgeVisit.put(e, EdgeVisitType.TREE);
+                infoV.predecessor = u;
+                time = dfsVisit(v, nodeVisit, edgeVisit, time, order);
+            } else if (infoV.colour == NodeColour.GRAY) {
+                edgeVisit.put(e, EdgeVisitType.BACKWARD);
+            } else {
+                // black
+                // determine forward or cross: approximate by discovery times
+                if (infoU.discovery != null && infoV.discovery != null && infoU.discovery < infoV.discovery)
+                    edgeVisit.put(e, EdgeVisitType.FORWARD);
+                else edgeVisit.put(e, EdgeVisitType.CROSS);
+            }
+        }
+        infoU.colour = NodeColour.BLACK;
+        time++; infoU.finish = time;
+        return time;
+    }
+
+    //dot rel
+    public static Graph fromDotFile(String filename) throws IOException { return fromDotFile(filename, ".gv"); }
+    public static Graph fromDotFile(String filename, String extension) throws IOException {
+        Path path = Paths.get(filename + extension);
+        List<String> lines = Files.readAllLines(path, StandardCharsets.UTF_8);
+        Graph g = new Graph();
+        Pattern edgePattern = Pattern.compile("\\s*(\\d+)\\s*(->|--)\\s*(\\d+)(\\s*\"?\"?)\\s*(\\[.*\\])?;?\\s*");
+        // Better: loosen regex
+        Pattern simpleEdge = Pattern.compile("\\s*(\\d+)\\s*(->|--)\\s*(\\d+)(.*)");
+        for (String raw : lines) {
+            String line = raw.trim();
+            if (line.isEmpty()) continue;
+            if (line.startsWith("//") || line.startsWith("digraph") || line.startsWith("graph") || line.startsWith("}")) continue;
+            Matcher m = simpleEdge.matcher(line);
+            if (m.find()) {
+                int u = Integer.parseInt(m.group(1));
+                int v = Integer.parseInt(m.group(3));
+                Integer weight = null;
+                String tail = m.group(4);
+                if (tail != null && tail.contains("[")) {
+                    // findng label= or len=
+                    Pattern attr = Pattern.compile("label\\s*=\\s*(\\d+).*len\\s*=\\s*(\\d+)|len\\s*=\\s*(\\d+).*label\\s*=\\s*(\\d+)|label\\s*=\\s*(\\d+)|len\\s*=\\s*(\\d+)");
+                    Matcher ma = attr.matcher(tail);
+                    if (ma.find()) {
+                        for (int i = 1; i <= ma.groupCount(); i++) {
+                            String gstr = ma.group(i);
+                            if (gstr != null) {
+                                try { weight = Integer.parseInt(gstr);
+                                    break; }
+                                catch (NumberFormatException ex){}
+                            }
+                        }
+                    }
+                }
+                g.addEdge(u, v, weight);
+            }
+        }
+        return g;
+    }
+    public void toDotFile(String fileName) throws IOException { toDotFile(fileName, ".gv"); }
+    public void toDotFile(String fileName, String extension) throws IOException {
+        Path p = Paths.get(fileName + extension);
+        Files.writeString(p, toDotString(), StandardCharsets.UTF_8);
+    }
+    public String toDotString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("digraph G {\n");
+        List<Edge> edges = getAllEdges();
+        for (Edge e : edges) {
+            sb.append(String.format("%d -> %d", e.from().getId(), e.to().getId()));
+            if (e.isWeighted()) sb.append(String.format(" [label=%d, len=%d]", e.getWeight(), e.getWeight()));
+            sb.append("\n");
+        }
+        sb.append("}\n");
+        return sb.toString();
+    }
+
 }
