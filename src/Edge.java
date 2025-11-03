@@ -1,66 +1,45 @@
+//package m1graphs2025;
+
 import java.util.Objects;
 
-public class Edge {
-    public Node from ;
-    public Node to ;
-    public int weight;
-    Graph g= new Graph();
+public final class Edge implements Comparable<Edge> {
+    private final Node from;
+    private final Node to;
+    private final Integer weight; // null = unweighted
 
-    public Edge(Node from, Node to) {
-        this.from = from;
-        this.to = to;
-    }
-    public Edge(int id1, int id2, Graph g) {
-
-            if (this.from.getGraph() == this.to.getGraph()) {
-                this.from.id = id1;
-                this.to.id = id2;
-                this.g = g;
-            }
-            else
-                throw new IllegalArgumentException("graph not matched") ;
-    }
-    public Edge(int weight, Node from, Node to) {
-        this.weight = weight;
-        this.from = from;
-        this.to = to;
+    public Edge(Node from, Node to) { this(from, to, null); }
+    public Edge(Node from, Node to, Integer weight) {
+        if (from == null || to == null) throw new IllegalArgumentException("nodes cannot be null");
+        if (from.getGraph() != to.getGraph()) throw new IllegalArgumentException("nodes must share graph");
+        this.from = from; this.to = to; this.weight = weight;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Edge edge = (Edge) o;
-        return weight == edge.weight && Objects.equals(from, edge.from) && Objects.equals(to, edge.to);
-    }
+    public Edge(int fromId, int toId, Graph g) { this(g.ensureNode(fromId), g.ensureNode(toId), null); }
+    public Edge(int fromId, int toId, Integer w, Graph g) { this(g.ensureNode(fromId), g.ensureNode(toId), w); }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(from, to, weight);
-    }
+    public Node from() { return from; }
+    public Node to() { return to; }
+    public Edge getSymmetric() { return new Edge(to, from, weight); }
+    public boolean isSelfLoop() { return from.getId() == to.getId(); }
+    public boolean isMultiEdge() { return from.getGraph().isMultiEdge(from, to); }
+    public boolean isWeighted() { return weight != null; }
+    public Integer getWeight() { return weight; }
 
-    public Node from(){
-        return from;
+    @Override public int compareTo(Edge o) {
+        int c1 = Integer.compare(from.getId(), o.from.getId()); if (c1 != 0) return c1;
+        int c2 = Integer.compare(to.getId(), o.to.getId()); if (c2 != 0) return c2;
+        int w1 = weight == null ? 0 : weight;
+        int w2 = o.weight == null ? 0 : o.weight;
+        return Integer.compare(w1, w2);
     }
-    public Node to(){
-        return to;
+    @Override public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Edge)) return false;
+        Edge e = (Edge) o;
+        return Objects.equals(from, e.from) && Objects.equals(to, e.to) && Objects.equals(weight, e.weight);
     }
-    public Integer getWeight(){
-        return weight;
+    @Override public int hashCode() { return Objects.hash(from, to, weight); }
+    @Override public String toString() {
+        return "(" + from.getId() + " -> " + to.getId() + (weight != null ? ", w=" + weight : "") + ")";
     }
-    public boolean isWeighted() {
-        return weight != 0;
-    }
-    public boolean isSelfLoop(){
-        return this.to == this.from;
-    }
-    //TODO
-
-    public Edge getSymmetric(){
-        return new Edge(to(),from());
-    }
-
-    public boolean isMultiEdge(){
-         return true;
-    }
-
 }
