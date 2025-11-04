@@ -1,5 +1,6 @@
 package m1graphs2025;
 
+import java.io.IOException;
 import java.util.*;
 
 public class Main {
@@ -71,5 +72,23 @@ public class Main {
                     en.getValue().finish + ", pred=" +
                     (en.getValue().predecessor == null ? "null" : en.getValue().predecessor.getName()));
         }
+
+
+        //______________________________________________
+        try {
+            g.toDotFile("testGraph",".dot");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Graph f;
+//        System.out.println(System.getProperty("user.dir"));
+            try {
+                // change the path if you want to test it
+                f = Graph.fromDotFile("C:\\Users\\TechLead\\Desktop\\Graph\\src\\m1graphs2025\\dotfile");
+                System.out.println("Nodes: " + f.getAllNodes());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
     }
 }
