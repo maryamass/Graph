@@ -1,13 +1,30 @@
 package m1graphs2025;
 
 import java.util.Objects;
-
+/**
+ *
+ * @author Maryam Assmar
+ * @author Issa Hassane Abdramane
+ */
 public final class Edge implements Comparable<Edge> {
     private final Node from;
     private final Node to;
     private final Integer weight; // null = unweighted
-
+    /**
+     * Create an unweighted directed edge from one node to another.
+     * @param from source node
+     * @param to destination node
+     * @throws IllegalArgumentException if nodes are null or belong to different graphs
+     */
     public Edge(Node from, Node to) { this(from, to, null); }
+
+    /**
+     * Create a directed edge with optional weight.
+     * @param from source node
+     * @param to destination node
+     * @param weight edge weight; null means unweighted
+     * @throws IllegalArgumentException if nodes are null or belong to different graphs
+     */
     public Edge(Node from, Node to, Integer weight) {
         if (from == null || to == null) throw new IllegalArgumentException("nodes cannot be null");
         if (from.getGraph() != to.getGraph()) throw new IllegalArgumentException("nodes must share graph");
@@ -16,13 +33,31 @@ public final class Edge implements Comparable<Edge> {
 
     public Edge(int fromId, int toId, Graph g) { this(g.ensureNode(fromId), g.ensureNode(toId), null); }
     public Edge(int fromId, int toId, Integer w, Graph g) { this(g.ensureNode(fromId), g.ensureNode(toId), w); }
-
+    /**
+     * Return the source node.
+     * @return source Node
+     */
     public Node from() { return from; }
+
+    /**
+     * Return the destination node.
+     * @return destination Node
+     */
     public Node to() { return to; }
     public Edge getSymmetric() { return new Edge(to, from, weight); }
     public boolean isSelfLoop() { return from.getId() == to.getId(); }
     public boolean isMultiEdge() { return from.getGraph().isMultiEdge(from, to); }
+
+    /**
+     * Whether this edge has a weight.
+     * @return true if weight is non-null
+     */
     public boolean isWeighted() { return weight != null; }
+
+    /**
+     * Return the weight if any.
+     * @return Integer weight or null
+     */
     public Integer getWeight() { return weight; }
 
     @Override public int compareTo(Edge o) {

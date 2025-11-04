@@ -2,7 +2,16 @@ package m1graphs2025;
 
 import java.util.*;
 
+/**
+ * @author Maryam Assmar
+ * @author Issa Hassane Abdramane
+ */
 public class UndirectedGraph extends Graph {
+
+    /**
+     * Add an undirected edge. Stores two symmetric arcs (u->v and v->u) with identical weight.
+     * @param e edge whose endpoints and weight are used
+     */
     @Override
     public void addEdge(Edge e) {
         if (e == null) return;

@@ -9,6 +9,10 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * @author Maryam Assmar
+ * @author Issa Hassane Abdramane
+ */
 public class Graph {
     protected final Map<Node, List<Edge>> adjEdList = new HashMap<>();
     protected final Map<Node, List<Edge>> inAdjEdList = new HashMap<>();
@@ -22,6 +26,13 @@ public class Graph {
         for (Node u : g.getAllNodes()) this.addNode(u.getId());
         for (Edge e : g.getAllEdges()) this.addEdge(e.from().getId(), e.to().getId(), e.getWeight());
     }
+
+    /**
+     * Build a graph from a successor-array encoding.
+     *
+     * @param sa successor-array values
+     * @return a new graph representing the encoding
+     */
     private static Graph fromSA(int[] sa) {
         Graph g = new Graph();
         int current = 1;
@@ -39,19 +50,86 @@ public class Graph {
         return g;
     }
 
+    /**
+     * Ensure the node with the given id exists in the graph.
+     *
+     * @param id node id
+     * @return the existing or newly created node
+     * @throws NullPointerException if creation fails unexpectedly
+     */
     Node ensureNode(int id) { Node n = getNode(id); if (n != null) return n; addNode(id); return Objects.requireNonNull(getNode(id)); }
+
+    /**
+     * Largest node id present, or 0 if empty.
+     *
+     * @return max node id, or 0
+     */
     public int largestNodeId() { return adjEdList.keySet().stream().mapToInt(Node::getId).max().orElse(0); }
+
+    /**
+     * Smallest node id present, or 0 if empty.
+     *
+     * @return min node id, or 0
+     */
     public int smallestNodeId() { return adjEdList.keySet().stream().mapToInt(Node::getId).min().orElse(0); }
 
-    // Node-related
+    // Node-related stuff
+
+    /**
+     * Number of nodes.
+     *
+     * @return node count
+     */
     public int nbNodes() { return adjEdList.size(); }
+
+    /**
+     * Check if a node object is represented by id in this graph.
+     *
+     * @param n node object (may be from another graph)
+     * @return true if a node with the same id exists here
+     */
     public boolean usesNode(Node n) { return n != null && getNode(n.getId()) != null; }
+
+    /**
+     * Check if a node id exists in this graph.
+     *
+     * @param id node id
+     * @return true if present
+     */
     public boolean usesNode(int id) { return getNode(id) != null; }
+
+
+    /**
+     * Check if a node handle is owned by this graph and present.
+     *
+     * @param n node handle
+     * @return true if {@code n.getGraph() == this} and id exists
+     */
     public boolean holdsNode(Node n) { return n != null && n.getGraph() == this && usesNode(n.getId()); }
+
+    /**
+     * Get the node with a given id.
+     *
+     * @param id node id
+     * @return node or null if absent
+     */
     public Node getNode(int id) { for (Node u : adjEdList.keySet()) if (u.getId() == id) return u; return null; }
 
+    /**
+     * Add a node by object.
+     *
+     * @param n node whose id will be used
+     * @return true if inserted, false if already present
+     */
     public boolean addNode(Node n) {
         return addNode(n.getId()); }
+
+    /**
+     * Add a node by id.
+     *
+     * @param id node id
+     * @return true if inserted, false if already present
+     */
     public boolean addNode(int id) {
         if (usesNode(id)) return false;
         Node n = new Node(id, this);
@@ -60,7 +138,20 @@ public class Graph {
         return true;
     }
 
+    /**
+     * Remove a node by object.
+     *
+     * @param n node
+     * @return true if removed
+     */
     public boolean removeNode(Node n) { return removeNode(n.getId()); }
+
+    /**
+     * Remove a node by id. Also removes all incident edges.
+     *
+     * @param id node id
+     * @return true if removed
+     */
     public boolean removeNode(int id) {
         Node n = getNode(id); if (n == null) return false;
         for (Edge e : new ArrayList<>(getIncidentEdges(id))) removeEdge(e);
@@ -68,10 +159,30 @@ public class Graph {
         return true;
     }
 
+    /**
+     * All nodes sorted by id ascending.
+     *
+     * @return list of nodes
+     */
     public List<Node> getAllNodes() {
         List<Node> nodes = new ArrayList<>(adjEdList.keySet()); Collections.sort(nodes); return nodes; }
 
+
+    /**
+     * Successors of a node.
+     *
+     * @param n node
+     * @return unique successors sorted by id
+     */
     public List<Node> getSuccessors(Node n) { return getSuccessors(n.getId()); }
+
+    /**
+     * Successors of a node by id.
+     *
+     * @param id node id
+     * @return unique successors sorted by id
+     * @throws NullPointerException if id is absent
+     */
     public List<Node> getSuccessors(int id) {
         Node u = Objects.requireNonNull(getNode(id));
         TreeSet<Node> set = new TreeSet<>();
@@ -79,7 +190,21 @@ public class Graph {
         return new ArrayList<>(set);
     }
 
+    /**
+     * Successors with multiplicities preserved.
+     *
+     * @param n node
+     * @return successors including duplicates, in edge order
+     */
     public List<Node> getSuccessorsMulti(Node n) { return getSuccessorsMulti(n.getId()); }
+
+    /**
+     * Successors with multiplicities preserved, by id.
+     *
+     * @param id node id
+     * @return successors including duplicates, in edge order
+     * @throws NullPointerException if id is absent
+     */
     public List<Node> getSuccessorsMulti(int id) {
         Node u = Objects.requireNonNull(getNode(id));
         List<Node> list = new ArrayList<>();
@@ -87,9 +212,31 @@ public class Graph {
         return list;
     }
 
+
+    /**
+     * Whether there is at least one edge u→v.
+     *
+     * @param u source
+     * @param v target
+     * @return true if adjacent
+     */
     public boolean adjacent(Node u, Node v) { return adjacent(u.getId(), v.getId()); }
+
+    /**
+     * Whether there is at least one edge uid→vid.
+     *
+     * @param uid source id
+     * @param vid target id
+     * @return true if adjacent
+     */
     public boolean adjacent(int uid, int vid) { return !getEdges(uid, vid).isEmpty(); }
 
+    /**
+     * In-degree of a node.
+     *
+     * @param n node
+     * @return number of incoming edges
+     */
     public int inDegree(Node n) { return inDegree(n.getId()); }
     public int inDegree(int id) { return getInEdges(id).size(); }
     public int outDegree(Node n) { return outDegree(n.getId()); }
