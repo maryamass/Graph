@@ -1,4 +1,5 @@
-package m1graphs2025;
+
+import m1graphs2025.*;
 
 import java.util.*;
 
