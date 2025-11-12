@@ -10,10 +10,8 @@ import java.util.Set;
 public class FLowNetwork extends Graph {
     private Map<Edge, Integer> capacity;
 
-//    Graph g=new Graph();
-//    Node source = new Node( 1, "s", g);
-//    Node sink = new Node( 6, "t", g);
-//    Edge edge;
+    Node source = new Node( 1, "s", this);
+    Node sink = new Node( 6, "t", this);
 
     public void FlowNetwork() {
         capacity = new HashMap<>();
@@ -25,5 +23,12 @@ public class FLowNetwork extends Graph {
     }
     public int getCapacity(Node from, Node to) {
         return capacity.getOrDefault(new Edge(from, to), 0);
+    }
+    public Set<Edge> getEdges() {
+        return capacity.keySet();
+    }
+
+    public Map<Edge, Integer> getCapacities() {
+        return capacity;
     }
 }
