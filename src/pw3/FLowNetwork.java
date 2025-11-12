@@ -5,6 +5,7 @@ import m1graphs2025.Node;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class FLowNetwork extends Graph {
     private Map<Edge, Integer> capacity;
@@ -22,6 +23,7 @@ public class FLowNetwork extends Graph {
         super.addEdge(from, to);
         capacity.put(new Edge(from, to), cap);
     }
-
-
+    public int getCapacity(Node from, Node to) {
+        return capacity.getOrDefault(new Edge(from, to), 0);
+    }
 }
