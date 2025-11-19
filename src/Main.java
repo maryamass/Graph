@@ -1,4 +1,6 @@
 import m1graphs2025.*;
+import pw3.FLowNetwork;
+import pw3.Flow;
 
 import java.io.IOException;
 import java.util.*;
@@ -83,8 +85,7 @@ public class Main {
         Graph f;
 //        System.out.println(System.getProperty("user.dir"));
             try {
-                // change the path if you want to test it
-                f = Graph.fromDotFile("C:\\Users\\TechLead\\Desktop\\Graph\\src\\m1graphs2025\\dotfile");
+                f = Graph.fromDotFile("C:\\Users\\marya\\IdeaProjects\\m1graphs2025\\testGraph");
                 System.out.println("Nodes: " + f.getAllNodes());
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -94,7 +95,7 @@ public class Main {
         System.out.println("*-----------------------------------------------------------------------*");
 
         // Lecture VS Example
-        Graph gLecture = Graph.fromDotFile("C:\\Users\\TechLead\\Desktop\\Graph\\src\\m1graphs2025\\lectureDFS");
+         Graph gLecture = Graph.fromDotFile("C:\\Users\\marya\\IdeaProjects\\m1graphs2025\\testGraph");
         System.out.println("Graph read as:");
         System.out.println(gLecture.toDotString());
 
@@ -107,11 +108,33 @@ public class Main {
         for (Node u: gLecture.getAllNodes()) {
             System.out.println(u+": "+nodeVisit.get(u) );
         }
-
+//
         System.out.println("Edges visit info\n-----------------\n");
         for (Edge e: gLecture.getAllEdges()) {
             System.out.println(e+": "+edgeVisit.get(e) );
         }
+
+        FLowNetwork flow= new FLowNetwork();
+        flow.addEdge(1, 2);
+        flow.addEdge(1, 4);
+        flow.addEdge(3, 6);
+        flow.addEdge(4, 2);
+        flow.addEdge(4, 3);
+        flow.addEdge(4, 5);
+        System.out.println("Nodes: " + flow.getAllNodes());
+        System.out.println("Edges: " + flow.getAllEdges());
+        System.out.println("Capacities: " + flow.getCapacities());
+        if (args.length < 1) {
+            System.out.println("Usage: java maxflow.Main <input_dot_file>");
+            return;
+        }
+
+//        FLowNetwork network;
+//        Node s = network.getNodeByLabel("s");
+//        Node t = network.getNodeByLabel("t");
+//
+//        int maxFlow = FordFulkerson.maxFlow(network, s, t, "output");
+//        System.out.println(" Maximum flow value: " + maxFlow);
 
     }
 }

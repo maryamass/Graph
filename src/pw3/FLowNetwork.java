@@ -4,17 +4,24 @@ import m1graphs2025.Graph;
 import m1graphs2025.Node;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class FLowNetwork extends Graph {
     private Map<Edge, Integer> capacity;
 
+    // Graph g=new Graph();
     Node source = new Node( 1, "s", this);
     Node sink = new Node( 6, "t", this);
+//    Edge edge;
 
     public void FlowNetwork() {
         capacity = new HashMap<>();
+    }
+
+    public boolean isFlowNetwork(){
+        return (true);
     }
 
     public void addEdge(Node from, Node to, int cap) {
@@ -30,5 +37,13 @@ public class FLowNetwork extends Graph {
 
     public Map<Edge, Integer> getCapacities() {
         return capacity;
+    }
+
+    public List<Node> getNodes() {
+        return super.getAllNodes();
+    }
+
+    public Node getNodeByLabel(String s) {
+        return source;
     }
 }
