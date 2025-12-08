@@ -1,6 +1,7 @@
 import m1graphs2025.*;
 import pw3.FLowNetwork;
 import pw3.Flow;
+import pw3.FordFulkerson;
 
 import java.io.IOException;
 import java.util.*;
@@ -113,28 +114,26 @@ public class Main {
         for (Edge e: gLecture.getAllEdges()) {
             System.out.println(e+": "+edgeVisit.get(e) );
         }
-
+//
         FLowNetwork flow= new FLowNetwork();
-        flow.addEdge(1, 2);
-        flow.addEdge(1, 4);
-        flow.addEdge(3, 6);
-        flow.addEdge(4, 2);
-        flow.addEdge(4, 3);
-        flow.addEdge(4, 5);
+        flow.addEdge(1, 2,3);
+        flow.addEdge(1, 4, 7);
+        flow.addEdge(3, 6, 8);
+        flow.addEdge(4, 2, 4);
+        flow.addEdge(4, 3, 2);
+        flow.addEdge(4, 5,0);
         System.out.println("Nodes: " + flow.getAllNodes());
         System.out.println("Edges: " + flow.getAllEdges());
         System.out.println("Capacities: " + flow.getCapacities());
-        if (args.length < 1) {
-            System.out.println("Usage: java maxflow.Main <input_dot_file>");
-            return;
-        }
-
-//        FLowNetwork network;
-//        Node s = network.getNodeByLabel("s");
-//        Node t = network.getNodeByLabel("t");
 //
-//        int maxFlow = FordFulkerson.maxFlow(network, s, t, "output");
-//        System.out.println(" Maximum flow value: " + maxFlow);
+        Node s = flow.getNodeByLabel("s");
+        Node t = flow.getNodeByLabel("t");
+
+        int maxFlow = FordFulkerson.maxFlow(flow, s, t, "output");
+        System.out.println(" Maximum flow value: " + maxFlow);
+
+//        //int maxFlow = FordFulkerson.maxFlow(network, s, t, "output");
+        System.out.println(" Maximum flow value: " + maxFlow);
 
     }
 }

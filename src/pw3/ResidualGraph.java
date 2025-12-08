@@ -3,10 +3,10 @@ package pw3;
 import m1graphs2025.*;
 import java.util.*;
 
-public class ResidualNetwork extends Graph {
+public class ResidualGraph extends Graph {
     private Map<Edge, Integer> residualCapacity = new HashMap<>();
 
-    public ResidualNetwork(FLowNetwork network, Flow flow) {
+    public ResidualGraph(FLowNetwork network, Flow flow) {
         for (Node u : network.getNodes()) {
             addNode(u);
         }
@@ -28,7 +28,6 @@ public class ResidualNetwork extends Graph {
             }
         }
     }
-
     public int getResidualCapacity(Node from, Node to) {
         return residualCapacity.getOrDefault(new Edge(from, to), 0);
     }

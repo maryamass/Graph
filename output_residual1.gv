@@ -1,0 +1,4 @@
+digraph residual1 {
+rankdir="LR"
+label="(1) Residual graph. Flow: 0"
+}

@@ -11,32 +11,44 @@ import java.util.Set;
 public class FLowNetwork extends Graph {
     private Map<Edge, Integer> capacity;
 
-    // Graph g=new Graph();
-    Node source = new Node( 1, "s", this);
-    Node sink = new Node( 6, "t", this);
+    static Graph g= new Graph();
+    static Node source = g.getNode(1);
+    static Node sink = g.getNode(6);
 //    Edge edge;
 
-    public void FlowNetwork() {
-        capacity = new HashMap<>();
+    public FLowNetwork() {
+        super();
+        this.capacity = new HashMap<>();
     }
 
-    public boolean isFlowNetwork(){
-        return (true);
-    }
-
-    public void addEdge(Node from, Node to, int cap) {
+    public void addEdge(int from, int to, int cap) {
         super.addEdge(from, to);
-        capacity.put(new Edge(from, to), cap);
+
+        Edge realEdge = null;
+        for (Edge e : super.getAllEdges()) {
+            if (e.from().getId() == from && e.to().getId() == to) {
+                realEdge = e;
+                break;
+            }
+        }
+
+        if (realEdge == null) {
+            throw new RuntimeException("Edge was not created correctly in Graph!");
+        }
+
+        capacity.put(realEdge, cap);
     }
-    public int getCapacity(Node from, Node to) {
-        return capacity.getOrDefault(new Edge(from, to), 0);
-    }
-    public Set<Edge> getEdges() {
-        return capacity.keySet();
+
+
+    public int getCapacity(Node u, Node v) {
+        return capacity.getOrDefault(new Edge(u, v), 0);
     }
 
     public Map<Edge, Integer> getCapacities() {
         return capacity;
+    }
+    public Set<Edge> getEdges() {
+        return capacity.keySet();
     }
 
     public List<Node> getNodes() {

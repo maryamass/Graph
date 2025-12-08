@@ -72,4 +72,11 @@ public final class Node implements Comparable<Node> {
     }
     @Override public int hashCode() { return Objects.hash(id, System.identityHashCode(graph)); }
     @Override public String toString() { return name != null ? name + "(" + id + ")" : Integer.toString(id); }
+
+    public String getLabel() {
+        return (String) "string";
+    }
+
+    //added
+
 }
