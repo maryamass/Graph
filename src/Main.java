@@ -161,5 +161,28 @@ public class Main {
         int maxFlow = FordFulkerson.maxFlow(flow, s, t, "output");
         System.out.println("Maximum flow value: " + maxFlow);
 
+//ex given by prof (the code is correct)
+//       try {
+//            // Load the graph from the DOT file
+//            Graph grap = Graph.fromDotFile("TestFlowGiven");
+//            // Convert to FLowNetwork
+//            FLowNetwork flowNetwork = new FLowNetwork(grap);
+//           Node so = flowNetwork.getNode(1);
+//           Node ta = flowNetwork.getNode(6);
+//
+//           System.out.println("Nodes in the graph:");
+//           for (Node n : flowNetwork.getAllNodes()) {
+//               System.out.println("Node ID: " + n.getId());
+//           }
+//           System.out.println("Source node ID: " + so.getId());
+//           System.out.println("Sink node ID: " + ta.getId());
+//
+//           int maxFl = FordFulkerson.maxFlow(flowNetwork, so, ta, "output");
+//            System.out.println("Maximum flow value: " + maxFl);
+//        } catch (IOException e) {
+//            System.err.println("Error loading graph: " + e.getMessage());
+//            e.printStackTrace();
+//        }
     }
+
 }

@@ -15,6 +15,22 @@ public class FLowNetwork extends Graph {
         super();
         this.capacity = new HashMap<>();
     }
+    //to use dot file
+    public FLowNetwork(Graph g) {
+        super();
+        this.capacity = new HashMap<>(); // Initialize capacity map
+        // Copy nodes
+        for (Node n : g.getAllNodes()) {
+            this.addNode(n.getId());
+        }
+        for (Edge e : g.getAllEdges()) {
+            int from = e.from().getId();
+            int to = e.to().getId();
+            int cap = e.getWeight(); // Assuming weight is capacity
+            this.addEdge(from, to, cap);
+        }
+    }
+
 
     public void addEdge(int from, int to, int cap) {
         super.addEdge(from, to);

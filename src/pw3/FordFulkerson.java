@@ -96,7 +96,7 @@ public class FordFulkerson {
             step++;
         }
 
-        System.out.println("Maximum flow value: " + maxFlow);
+//        System.out.println("Maximum flow value: " + maxFlow);
         return maxFlow;
     }
     private static List<Node> bfs(ResidualGraph residual, Node s, Node t) {
