@@ -1,0 +1,14 @@
+digraph flow2 {
+  rankdir="LR"
+  label="(2) Flow induced from residual graph. Value: 16"
+  1 -> 3 [label="4/13", len=13];
+  2 -> 4 [label="12/12", len=12];
+  4 -> 3 [label="0/9", len=9];
+  5 -> 4 [label="0/7", len=7];
+  1 -> 2 [label="12/16", len=16];
+  2 -> 3 [label="0/10", len=10];
+  5 -> 6 [label="4/4", len=4];
+  3 -> 2 [label="0/4", len=4];
+  3 -> 5 [label="4/14", len=14];
+  4 -> 6 [label="12/20", len=20];
+}

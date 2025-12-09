@@ -9,11 +9,14 @@ public class Flow {
     public void setFlow(Node from, Node to, int value) {
         flow.put(new Edge(from, to), value);
     }
-    public int getFlow(Node from, Node to) {
-        return flow.getOrDefault(new Edge(from, to), 0);
-    }
 
-    public Map<Edge, Integer> getAllFlows() {
-        return flow;
+    public int getFlow(Node from, Node to) {
+        for (Edge e : flow.keySet()) {
+            if (e.from().getId() == from.getId() &&
+                    e.to().getId() == to.getId()) {
+                return flow.get(e);
+            }
+        }
+        return 0;
     }
 }

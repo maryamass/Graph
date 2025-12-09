@@ -11,11 +11,6 @@ import java.util.Set;
 public class FLowNetwork extends Graph {
     private Map<Edge, Integer> capacity;
 
-    static Graph g= new Graph();
-    static Node source = g.getNode(1);
-    static Node sink = g.getNode(6);
-//    Edge edge;
-
     public FLowNetwork() {
         super();
         this.capacity = new HashMap<>();
@@ -33,15 +28,18 @@ public class FLowNetwork extends Graph {
         }
 
         if (realEdge == null) {
-            throw new RuntimeException("Edge was not created correctly in Graph!");
+            throw new RuntimeException("Edge was not created correctly in Graph");
         }
 
         capacity.put(realEdge, cap);
     }
 
-
     public int getCapacity(Node u, Node v) {
-        return capacity.getOrDefault(new Edge(u, v), 0);
+        for (Edge e : capacity.keySet()) {
+            if (e.from().getId() == u.getId() && e.to().getId() == v.getId())
+                return capacity.get(e);
+        }
+        return 0;
     }
 
     public Map<Edge, Integer> getCapacities() {
@@ -53,9 +51,5 @@ public class FLowNetwork extends Graph {
 
     public List<Node> getNodes() {
         return super.getAllNodes();
-    }
-
-    public Node getNodeByLabel(String s) {
-        return source;
     }
 }

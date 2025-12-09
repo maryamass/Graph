@@ -4,35 +4,60 @@ import m1graphs2025.*;
 import java.util.*;
 
 public class ResidualGraph extends Graph {
+
     private Map<Edge, Integer> residualCapacity = new HashMap<>();
 
-    public ResidualGraph(FLowNetwork network, Flow flow) {
-        for (Node u : network.getNodes()) {
-            addNode(u);
-        }
+    public ResidualGraph() {
+        super();
+    }
 
-        for (Edge e : network.getEdges()) {
-            Node u = e.from();
-            Node v = e.to();
-            int capacity = network.getCapacity(u, v);
-            int f = flow.getFlow(u, v);
-
-            if (capacity - f > 0) {
-                addEdge(u, v);
-                residualCapacity.put(new Edge(u, v), capacity - f);
+    public void addResidualEdge(Node u, Node v, int cap) {
+        super.addEdge(u.getId(), v.getId(), cap);
+        Edge realEdge = null;
+        for (Edge e : super.getAllEdges()) {
+            if (e.from().getId() == u.getId() && e.to().getId() == v.getId()) {
+                realEdge = e;
+                break;
             }
+        }
+        if (realEdge == null) {
+            throw new RuntimeException("Edge not found for " + u.getId() + "->" + v.getId());
+        }
+        residualCapacity.put(realEdge, cap);
+    }
 
-            if (f > 0) {
-                addEdge(v, u);
-                residualCapacity.put(new Edge(v, u), f);
+    public int getResidualCapacity(Node u, Node v) {
+        for (Edge e : residualCapacity.keySet()) {
+            if (e.from().getId() == u.getId() &&
+                    e.to().getId() == v.getId()) {
+                return residualCapacity.get(e);
+            }
+        }
+        return 0;
+    }
+
+    public void setResidualCapacity(Node u, Node v, int value) {
+        for (Edge e : residualCapacity.keySet()) {
+            if (e.from().getId() == u.getId() &&
+                    e.to().getId() == v.getId()) {
+                residualCapacity.put(e, value);
+                return;
             }
         }
     }
-    public int getResidualCapacity(Node from, Node to) {
-        return residualCapacity.getOrDefault(new Edge(from, to), 0);
+
+    private Edge getEdgeFromTo(int from, int to) {
+        for (Edge e : super.getAllEdges()) {
+            if (e.from().getId() == from &&
+                    e.to().getId() == to) {
+                return e;
+            }
+        }
+        throw new RuntimeException("Residual edge not found!");
     }
 
     public Map<Edge, Integer> getResidualCapacities() {
         return residualCapacity;
     }
 }
+
