@@ -138,49 +138,87 @@ public class Main {
 ////        //int maxFlow = FordFulkerson.maxFlow(network, s, t, "output");
 //        System.out.println(" Maximum flow value: " + maxFlow);
 
-        FLowNetwork flow = new FLowNetwork();
-        flow.addEdge(1, 2, 16);
-        flow.addEdge(1, 3, 13);
-        flow.addEdge(2, 3, 10);
-        flow.addEdge(2, 4, 12);
-        flow.addEdge(3, 2, 4);
-        flow.addEdge(3, 5, 14);
-        flow.addEdge(4, 3, 9);
-        flow.addEdge(4, 6, 20);
-        flow.addEdge(5, 4, 7);
-        flow.addEdge(5, 6, 4);
-        Node s = flow.getNode(1);
-        Node t = flow.getNode(6);
-        if (s == null || t == null) {
-            throw new RuntimeException("Source or Sink node is NULL!");
-        }
-        System.out.println("Nodes: " + flow.getAllNodes());
-        System.out.println("Edges: " + flow.getAllEdges());
-        System.out.println("Capacities: " + flow.getCapacities());
-//
-        int maxFlow = FordFulkerson.maxFlow(flow, s, t, "output");
-        System.out.println("Maximum flow value: " + maxFlow);
+//        FLowNetwork flow = new FLowNetwork();
+//        flow.addEdge(1, 2, 16);
+//        flow.addEdge(1, 3, 13);
+//        flow.addEdge(2, 3, 10);
+//        flow.addEdge(2, 4, 12);
+//        flow.addEdge(3, 2, 4);
+//        flow.addEdge(3, 5, 14);
+//        flow.addEdge(4, 3, 9);
+//        flow.addEdge(4, 6, 20);
+//        flow.addEdge(5, 4, 7);
+//        flow.addEdge(5, 6, 4);
+//        Node s = flow.getNode(1);
+//        Node t = flow.getNode(6);
+//        if (s == null || t == null) {
+//            throw new RuntimeException("Source or Sink node is NULL!");
+//        }
+//        System.out.println("Nodes: " + flow.getAllNodes());
+//        System.out.println("Edges: " + flow.getAllEdges());
+//        System.out.println("Capacities: " + flow.getCapacities());
+////
+//        int maxFlow = FordFulkerson.maxFlow(flow, s, t, "output");
+//        System.out.println("Maximum flow value: " + maxFlow);
 
 //ex given by prof (the code is correct)
-//       try {
+       try {
+            // Load the graph from the DOT file
+            Graph grap = Graph.fromDotFile("TestFlowGiven");
+        // Check if the graph is a valid flow network
+        int sourceId = 1;
+        int sinkId = 8;
+//        if (!g.isFlowNetwork(sourceId, sinkId)) {
+//            throw new IllegalArgumentException("The graph is not a valid flow network. All nodes must be on a path from source to sink.");
+//        }
+            FLowNetwork flowNetwork = new FLowNetwork(grap);
+           Node so = flowNetwork.getNode(1);
+           Node ta = flowNetwork.getNode(8);
+
+           System.out.println("Nodes in the graph:");
+           for (Node n : flowNetwork.getAllNodes()) {
+               System.out.println("Node ID: " + n.getId());
+           }
+           System.out.println("Source node ID: " + so.getId());
+           System.out.println("Sink node ID: " + ta.getId());
+
+           int maxFl = FordFulkerson.maxFlow(flowNetwork, so, ta, "output");
+            System.out.println("Maximum flow value: " + maxFl);
+        } catch (IOException e) {
+            System.err.println("Error loading graph: " + e.getMessage());
+            e.printStackTrace();
+       }
+
+
+
+
+//        try {
 //            // Load the graph from the DOT file
-//            Graph grap = Graph.fromDotFile("TestFlowGiven");
+//            Graph gra = Graph.fromDotFile("flowNetw");
+//
+//            // Define source and sink nodes
+//            int sourceId = 1;
+//            int sinkId = 6;
 //            // Convert to FLowNetwork
-//            FLowNetwork flowNetwork = new FLowNetwork(grap);
-//           Node so = flowNetwork.getNode(1);
-//           Node ta = flowNetwork.getNode(6);
+//            FLowNetwork flowNetwork = new FLowNetwork(gra);
 //
-//           System.out.println("Nodes in the graph:");
-//           for (Node n : flowNetwork.getAllNodes()) {
-//               System.out.println("Node ID: " + n.getId());
-//           }
-//           System.out.println("Source node ID: " + so.getId());
-//           System.out.println("Sink node ID: " + ta.getId());
+//            // Get source and sink nodes from flowNetwork
+//            Node s = flowNetwork.getNode(sourceId);
+//            Node t = flowNetwork.getNode(sinkId);
 //
-//           int maxFl = FordFulkerson.maxFlow(flowNetwork, so, ta, "output");
-//            System.out.println("Maximum flow value: " + maxFl);
+//            // Check if source and sink nodes exist
+//            if (s == null || t == null) {
+//                throw new IllegalArgumentException("Source or sink node is null! Check node IDs.");
+//            }
+//
+//            // Run Ford-Fulkerson algorithm
+//            int maxFlow = FordFulkerson.maxFlow(flowNetwork, s, t, "output");
+//            System.out.println("Maximum flow value: " + maxFlow);
 //        } catch (IOException e) {
 //            System.err.println("Error loading graph: " + e.getMessage());
+//            e.printStackTrace();
+//        } catch (IllegalArgumentException e) {
+//            System.err.println("Error: " + e.getMessage());
 //            e.printStackTrace();
 //        }
     }

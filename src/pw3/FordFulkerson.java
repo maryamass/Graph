@@ -18,7 +18,7 @@ public class FordFulkerson {
         if (!network.getAllNodes().contains(s) || !network.getAllNodes().contains(t)) {
             throw new IllegalArgumentException("Source or sink not in graph!");
         }
-
+//add iteration to the readme file
         while (true) {
             iter++;
             if (iter > maxIterations) {

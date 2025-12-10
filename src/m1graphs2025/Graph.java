@@ -585,5 +585,98 @@ public class Graph {
         sb.append("}\n");
         return sb.toString();
     }
+    /**
+     * Checks if the graph is a valid flow network.
+     * A valid flow network must be:
+     * 1. Directed .
+     * 2. have Non-negative capacities (weights) on all edges.
+     * 3. A single source node and a single sink node.
+     * 4. All Nodes are in a path from source to sink
+     *
+     * @param sourceId The ID of the source node.
+     * @param sinkId The ID of the sink node.
+     * @return true if the graph is a valid flow network, false otherwise.
+     */
+    public boolean isFlowNetwork(int sourceId, int sinkId) {
+        // Check if source and sink nodes exist
+        Node source = this.getNode(sourceId);
+        Node sink = this.getNode(sinkId);
+        if (source == null || sink == null) {
+            return false;
+        }
 
+        // Check if all edges have non-negative weights (capacities)
+        for (Edge e : this.getAllEdges()) {
+            if (e.getWeight() == null || e.getWeight() < 0) {
+                return false;
+            }
+        }
+
+        // Check for self-loops
+        for (Edge e : this.getAllEdges()) {
+            if (e.from().getId() == e.to().getId()) {
+                return false;
+            }
+        }
+
+        // Check for multiple edges between the same pair of nodes
+        Set<String> edgeSet = new HashSet<>();
+        for (Edge e : this.getAllEdges()) {
+            String edgeKey = e.from().getId() + "->" + e.to().getId();
+            if (edgeSet.contains(edgeKey)) {
+                return false;
+            }
+            edgeSet.add(edgeKey);
+        }
+
+        // Check if all nodes are on a path from source to sink
+        Set<Node> visitedFromSource = new HashSet<>();
+        Queue<Node> queue = new LinkedList<>();
+        queue.add(source);
+        visitedFromSource.add(source);
+
+        while (!queue.isEmpty()) {
+            Node current = queue.poll();
+            for (Node neighbor : this.getSuccessors(current)) {
+                if (!visitedFromSource.contains(neighbor)) {
+                    visitedFromSource.add(neighbor);
+                    queue.add(neighbor);
+                }
+            }
+        }
+
+        Set<Node> visitedFromSink = new HashSet<>();
+        queue.clear();
+        queue.add(sink);
+        visitedFromSink.add(sink);
+
+        while (!queue.isEmpty()) {
+            Node current = queue.poll();
+            for (Node neighbor : this.getPredecessors(current)) { // Assuming you have a method to get predecessors
+                if (!visitedFromSink.contains(neighbor)) {
+                    visitedFromSink.add(neighbor);
+                    queue.add(neighbor);
+                }
+            }
+        }
+
+        // Check if all nodes are on a path from source to sink
+        for (Node node : this.getAllNodes()) {
+            int nodeId = node.getId();
+            if (nodeId != sourceId && nodeId != sinkId) {
+                if (!visitedFromSource.contains(node) || !visitedFromSink.contains(node)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+    public List<Node> getPredecessors(Node n) {
+        List<Node> predecessors = new ArrayList<>();
+        for (Edge e : this.getInEdges(n.getId())) {
+            predecessors.add(e.from());
+        }
+        return predecessors;
+    }
 }
